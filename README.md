@@ -2,7 +2,7 @@
 
 A hardware traffic light controller for a two-street intersection, implemented on an **Intel Cyclone III EP3C120F780C7 FPGA** using Verilog HDL.
 
-**Tools:** Quartus · ModelSim · Cyclone III FPGA
+**Tools:** Quartus · QuestaSim · Cyclone III FPGA
 
 ---
 
