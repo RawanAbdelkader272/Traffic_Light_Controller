@@ -10,15 +10,11 @@ A hardware traffic light controller for a two-street intersection, implemented o
 
 This project implements a traffic light controller for an intersection of two one-way streets (North and East). The controller uses car presence sensors — simulated via FPGA switches — to dynamically manage traffic flow.
 
-### Intersection Layout
+## 🎥 FPGA Demo
 
-```
-          [ North ]
-              |
-    ──────────┼──────────
-              |
-          [ East ] ──▶
-```
+A real-time demonstration of the traffic light controller running on the Cyclone III FPGA board, showing the LED outputs and 7-segment countdown display responding to the car sensor switches.
+
+📹 [Watch Demo Video](FPGA%20Demo)
 
 ---
 
