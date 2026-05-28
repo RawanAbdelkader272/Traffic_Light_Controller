@@ -1,4 +1,4 @@
-# 🚦 Traffic Light Controller 
+# Traffic Light Controller🚦
 
 A hardware traffic light controller for a two-street intersection, implemented on an **Intel Cyclone III EP3C120F780C7 FPGA** using Verilog HDL.
 
@@ -6,19 +6,25 @@ A hardware traffic light controller for a two-street intersection, implemented o
 
 ---
 
-## 📋 Project Overview
+## Project Overview
 
 This project implements a traffic light controller for an intersection of two one-way streets (North and East). The controller uses car presence sensors — simulated via FPGA switches — to dynamically manage traffic flow.
 
-## 🎥 FPGA Demo
+## FPGA Demo
 
 A real-time demonstration of the traffic light controller running on the Cyclone III FPGA board, showing the LED outputs and 7-segment countdown display responding to the car sensor switches.
 
-📹 [Watch Demo Video](FPGA%20Demo)
+🎥 [Watch Demo Video](FPGA%20Demo)
+
+### FPGA Synthesis (Quartus)
+1. Open `Traffic_Light_Controller.qpf` in Quartus
+2. Compile the project (Processing → Start Compilation)
+3. Program the Cyclone III FPGA
+4. Use the onboard switches as car sensors and observe the LEDs and 7-segment display
 
 ---
 
-## ⚙️ Behavioral Requirements
+## Behavioral Requirements
 
 | Condition | Behavior |
 |-----------|----------|
@@ -27,6 +33,15 @@ A real-time demonstration of the traffic light controller running on the Cyclone
 | Both roads have cars | Cycle through all 4 phases |
 | Green phase duration | At least **30 seconds** |
 | Yellow phase duration | Exactly **5 seconds** (both directions yellow) |
+
+## Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `GREEN_TIME` | 30 | Green phase duration (seconds) |
+| `YELLOW_TIME` | 5 | Yellow phase duration (seconds) |
+| `CLK_DIV` | 50,000,000 | Clock divider for 1Hz from 50MHz |
+| `MUX_CLK_DIV` | 50,000 | Clock divider for 7-segment MUX |
 
 ### Full Cycle (both roads have cars)
 
@@ -37,7 +52,7 @@ Green North / Red East  →  Yellow / Yellow  →  Red North / Green East  →  
 
 ---
 
-## 🧠 FSM Design
+## FSM Design
 
 The system uses a **synchronous Moore FSM** with four states:
 
@@ -70,7 +85,7 @@ Traffic_Light_Controller/
 
 ---
 
-## 🔌 Hardware Interface
+## Hardware Interface
 
 | Signal | Direction | Description |
 |--------|-----------|-------------|
@@ -85,7 +100,7 @@ Traffic_Light_Controller/
 
 ---
 
-## 🧩 Module Breakdown
+## Module Breakdown
 
 ### `traffic_light_controller`
 Top-level module. Contains the FSM logic, state transitions, and output assignments. Instantiates all submodules.
@@ -104,7 +119,7 @@ Converts a 4-bit BCD digit (0–9) into the 7-segment encoding for the display.
 
 ---
 
-## ✅ Verification
+## Verification ✅ 
 
 Verified through simulation in **ModelSim** and real-time testing on the FPGA.
 
@@ -119,41 +134,11 @@ Verified through simulation in **ModelSim** and real-time testing on the FPGA.
 
 ---
 
-## 📄 Full Report
+## Full Report
 
 The complete project report including circuit schematic, pin assignment, FSM diagram, and code walkthrough is available here:
 
 📥 [TrafficLightController.pdf](TrafficLightController1.pdf)
 
----
 
-## 🛠️ How to Run
 
-### Simulation (ModelSim)
-```bash
-# Compile all files
-vlog traffic_light_controller.v traffic_light_controller_tb.v
-
-# Run simulation
-vsim traffic_light_controller_tb
-
-# Load waveform
-do wave.do
-```
-
-### FPGA Synthesis (Quartus)
-1. Open `Traffic_Light_Controller.qpf` in Quartus
-2. Compile the project (Processing → Start Compilation)
-3. Program the Cyclone III FPGA
-4. Use the onboard switches as car sensors and observe the LEDs and 7-segment display
-
----
-
-## 📌 Parameters
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `GREEN_TIME` | 30 | Green phase duration (seconds) |
-| `YELLOW_TIME` | 5 | Yellow phase duration (seconds) |
-| `CLK_DIV` | 50,000,000 | Clock divider for 1Hz from 50MHz |
-| `MUX_CLK_DIV` | 50,000 | Clock divider for 7-segment MUX |
