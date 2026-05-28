@@ -1,0 +1,2 @@
+Info (10281): Verilog HDL Declaration information at traffic_light_controller.v(2): object "CLK_DIV" differs only in case from object "clk_div" in the same scope
+Info (10281): Verilog HDL Declaration information at traffic_light_controller.v(2): object "MUX_CLK_DIV" differs only in case from object "mux_clk_div" in the same scope

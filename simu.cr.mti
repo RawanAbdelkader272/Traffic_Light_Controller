@@ -1,0 +1,28 @@
+D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller_tb.v {1 {vlog -work work D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller_tb.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module traffic_light_controller_tb
+
+Top level modules:
+	traffic_light_controller_tb
+
+} {} {}} D:/Semster_7/VLSI/Traffic_Light_Controller/timer.v {1 {vlog -work work D:/Semster_7/VLSI/Traffic_Light_Controller/timer.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module timer
+-- Compiling module clock_divider
+-- Compiling module mux_clock_divider
+-- Compiling module seven_seg_decoder
+
+Top level modules:
+	timer
+	clock_divider
+	mux_clock_divider
+	seven_seg_decoder
+
+} {} {}} D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller.v {1 {vlog -work work D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller.v
+Model Technology ModelSim ALTERA vlog 10.1d Compiler 2012.11 Nov  2 2012
+-- Compiling module traffic_light_controller
+
+Top level modules:
+	traffic_light_controller
+
+} {} {}}

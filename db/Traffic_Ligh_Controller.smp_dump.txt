@@ -1,0 +1,14 @@
+
+State Machine - |traffic_light_controller|prev_state
+Name prev_state.STATE_E_YELLOW prev_state.STATE_E_GREEN prev_state.STATE_N_YELLOW prev_state.STATE_N_GREEN 
+prev_state.STATE_N_GREEN 0 0 0 0 
+prev_state.STATE_N_YELLOW 0 0 1 1 
+prev_state.STATE_E_GREEN 0 1 0 1 
+prev_state.STATE_E_YELLOW 1 0 0 1 
+
+State Machine - |traffic_light_controller|state_reg
+Name state_reg.STATE_E_YELLOW state_reg.STATE_E_GREEN state_reg.STATE_N_YELLOW state_reg.STATE_N_GREEN 
+state_reg.STATE_N_GREEN 0 0 0 0 
+state_reg.STATE_N_YELLOW 0 0 1 1 
+state_reg.STATE_E_GREEN 0 1 0 1 
+state_reg.STATE_E_YELLOW 1 0 0 1 

@@ -1,0 +1,151 @@
+module timer  
+#(parameter FINAL_VALUE = 30)  // Default 30 seconds
+(
+  input clk,           // Clock input
+  input reset_n,       // Active low reset  
+  input start,         // Start/restart timer (pulse)
+  output done,         // Timer done signal
+  output [5:0] count   // Current count value for display
+);
+
+localparam BITS = 6;  // 6 bits enough for counting up to 63
+
+reg [BITS-1:0] Q;
+reg running;
+
+always @(posedge clk, negedge reset_n)
+begin
+  if (~reset_n) begin
+    Q <= 0;
+    running <= 0;
+  end
+  else if (start) begin
+    Q <= 0;
+    running <= 1;
+  end
+  else if (running && ~done) begin
+    Q <= Q + 1;
+  end
+  else if (done) begin
+    running <= 0;
+  end
+end
+
+assign done = (Q >= FINAL_VALUE);
+assign count = Q;
+
+endmodule
+
+// Clock divider module to generate 1Hz from 50MHz
+// For simulation: set DIV_VALUE = 1 for pass-through
+module clock_divider
+#(parameter DIV_VALUE = 50000000)  // 50MHz to 1Hz (use 1 for simulation)
+(
+  input clk_in,        // 50MHz input clock
+  input reset_n,       // Active low reset
+  output reg clk_out   // 1Hz output clock
+);
+
+generate
+  if (DIV_VALUE <= 1) begin : passthrough
+    // Pass-through mode for simulation
+    always @(posedge clk_in, negedge reset_n)
+    begin
+      if (~reset_n)
+        clk_out <= 0;
+      else
+        clk_out <= ~clk_out;
+    end
+  end
+  else begin : divider
+    localparam BITS = $clog2(DIV_VALUE) + 1;
+    reg [BITS-1:0] counter;
+    
+    always @(posedge clk_in, negedge reset_n)
+    begin
+      if (~reset_n) begin
+        counter <= 0;
+        clk_out <= 0;
+      end
+      else if (counter >= (DIV_VALUE/2 - 1)) begin
+        counter <= 0;
+        clk_out <= ~clk_out;
+      end
+      else begin
+        counter <= counter + 1;
+      end
+    end
+  end
+endgenerate
+
+endmodule
+
+// Clock divider for 7-segment multiplexing (generates ~1kHz from 50MHz)
+// For simulation: set DIV_VALUE = 1 for pass-through
+module mux_clock_divider
+#(parameter DIV_VALUE = 50000)  // 50MHz to ~1kHz for multiplexing
+(
+  input clk_in,        // 50MHz input clock
+  input reset_n,       // Active low reset
+  output reg clk_out   // ~1kHz output clock for digit multiplexing
+);
+
+generate
+  if (DIV_VALUE <= 1) begin : passthrough
+    // Pass-through mode for simulation
+    always @(posedge clk_in, negedge reset_n)
+    begin
+      if (~reset_n)
+        clk_out <= 0;
+      else
+        clk_out <= ~clk_out;
+    end
+  end
+  else begin : divider
+    localparam BITS = $clog2(DIV_VALUE) + 1;
+    reg [BITS-1:0] counter;
+    
+    always @(posedge clk_in, negedge reset_n)
+    begin
+      if (~reset_n) begin
+        counter <= 0;
+        clk_out <= 0;
+      end
+      else if (counter >= (DIV_VALUE/2 - 1)) begin
+        counter <= 0;
+        clk_out <= ~clk_out;
+      end
+      else begin
+        counter <= counter + 1;
+      end
+    end
+  end
+endgenerate
+
+endmodule
+
+// Seven segment decoder for displaying time
+module seven_seg_decoder(
+  input [3:0] digit,
+  output reg [6:0] seg  // seg[6:0] = {g, f, e, d, c, b, a}
+);
+
+always @(*)
+begin
+  case(digit)
+    4'd0: seg = 7'b1000000;  // 0
+    4'd1: seg = 7'b1111001;  // 1
+    4'd2: seg = 7'b0100100;  // 2
+    4'd3: seg = 7'b0110000;  // 3
+    4'd4: seg = 7'b0011001;  // 4
+    4'd5: seg = 7'b0010010;  // 5
+    4'd6: seg = 7'b0000010;  // 6
+    4'd7: seg = 7'b1111000;  // 7
+    4'd8: seg = 7'b0000000;  // 8
+    4'd9: seg = 7'b0010000;  // 9
+    default: seg = 7'b1111111;  // Off
+  endcase
+end
+
+endmodule
+

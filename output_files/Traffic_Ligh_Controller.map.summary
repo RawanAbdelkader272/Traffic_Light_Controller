@@ -1,0 +1,14 @@
+Analysis & Synthesis Status : Successful - Tue Dec 30 10:33:20 2025
+Quartus II 64-Bit Version : 13.1.0 Build 162 10/23/2013 SJ Web Edition
+Revision Name : Traffic_Ligh_Controller
+Top-level Entity Name : traffic_light_controller
+Family : Cyclone III
+Total logic elements : 179
+    Total combinational functions : 179
+    Dedicated logic registers : 59
+Total registers : 59
+Total pins : 19
+Total virtual pins : 0
+Total memory bits : 0
+Embedded Multiplier 9-bit elements : 0
+Total PLLs : 0

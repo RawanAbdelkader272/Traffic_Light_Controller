@@ -1,0 +1,119 @@
+m255
+K3
+13
+cModel Technology
+Z0 dD:\Semster_7\Advanced_Computer_Architecture\Lab\Altera
+vclock_divider
+Z1 I=3T8HdAg2>hbKkOL_W6FJ0
+Z2 V7=E5QF`TZZC^OUI?YXid[2
+Z3 dD:\Semster_7\VLSI\Traffic_Light_Controller
+Z4 w1767094225
+Z5 8D:/Semster_7/VLSI/Traffic_Light_Controller/timer.v
+Z6 FD:/Semster_7/VLSI/Traffic_Light_Controller/timer.v
+L0 33
+Z7 OV;L;10.1d;51
+r1
+31
+Z8 !s108 1767096552.282000
+Z9 !s107 D:/Semster_7/VLSI/Traffic_Light_Controller/timer.v|
+Z10 !s90 -reportprogress|300|-work|work|D:/Semster_7/VLSI/Traffic_Light_Controller/timer.v|
+Z11 o-work work -O0
+Z12 !s100 ^_^_XEX4f[g`K?OdHcG2Z2
+!i10b 1
+!s85 0
+!s101 -O0
+vmux_clock_divider
+Z13 Ij3benaeUldbAG]XIib<O03
+Z14 Vmg?9:V;CaYFD>e:c6A8JB1
+R3
+R4
+R5
+R6
+L0 74
+R7
+r1
+31
+R8
+R9
+R10
+R11
+Z15 !s100 :i_BnhAd3TSbhA2_ZCRUz3
+!i10b 1
+!s85 0
+!s101 -O0
+vseven_seg_decoder
+Z16 I3AmecX_4gNfjSl[``B1:h3
+Z17 VcT1lgOL=;VGBV@9F`D2GN2
+R3
+R4
+R5
+R6
+Z18 L0 115
+R7
+r1
+31
+R8
+R9
+R10
+R11
+Z19 !s100 O0;<[ejWF<Zb72TRE=VlV1
+!i10b 1
+!s85 0
+!s101 -O0
+vtimer
+Z20 IRDQQQijZIz=V25hh83<Eo2
+Z21 VGf<<R^HzA^]L4;4ibE7Tn0
+R3
+R4
+R5
+R6
+L0 1
+R7
+r1
+31
+R8
+R9
+R10
+R11
+Z22 !s100 MhH`Yfe<Yn1iVjQXTl4MG3
+!i10b 1
+!s85 0
+!s101 -O0
+vtraffic_light_controller
+Z23 II1_ObF@eYTEjLTfY;o?b81
+Z24 VBgJUCT3][Un53<Dh5Z4:W2
+R3
+Z25 w1767094938
+Z26 8D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller.v
+Z27 FD:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller.v
+L0 1
+R7
+r1
+31
+Z28 !s90 -reportprogress|300|-work|work|D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller.v|
+R11
+!i10b 1
+Z29 !s100 ^MF7U9];6Z[<i9:`n=4Ak1
+!s85 0
+Z30 !s108 1767096552.327000
+Z31 !s107 D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller.v|
+!s101 -O0
+vtraffic_light_controller_tb
+!i10b 1
+Z32 !s100 PB`5odQ7ZFOfm1]N4RaZQ2
+Z33 I_U6UB0V?<JYADGF>@JSg=0
+Z34 V5@:SZZC?EV^BkG:DN:I0D3
+R3
+Z35 w1766880312
+Z36 8D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller_tb.v
+Z37 FD:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller_tb.v
+L0 1
+R7
+r1
+!s85 0
+31
+!s108 1767096552.366000
+!s107 D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller_tb.v|
+Z38 !s90 -reportprogress|300|-work|work|D:/Semster_7/VLSI/Traffic_Light_Controller/traffic_light_controller_tb.v|
+!s101 -O0
+R11

@@ -1,0 +1,127 @@
+module exp5_2 (SW, LED, HEX, EN1, EN2, clr, clk);
+
+    input  [3:0] SW;
+    input        clr, clk;
+    output [3:0] LED;
+    output reg [6:0] HEX;
+    output reg EN1, EN2;
+
+    reg count;
+    wire clk_d;
+    wire [3:0] V, A, mux_out;
+    wire [6:0] hex0, hex1;
+    wire Z;
+
+    assign V   = SW[3:0];     // 4'bxxxx to HEX0
+    assign LED = ~SW;         // activate LED when switch is high '1'
+
+    // Instantiate modules
+    counter_div u1 (clr, clk, clk_d);
+    comparator  c0 (V, Z);
+    crkt_A      a0 (V, A);
+    mux_4bit_2_to_1 m0 (V, A, Z, mux_out);
+    seven_segment s0 (mux_out, hex0);
+    seven_segment s1 (Z, hex1);
+
+    always @(posedge clk_d) begin
+        case (count)
+            1'b0: begin
+                EN1   <= 1'b1;
+                EN2   <= 1'b0;
+                HEX   <= hex0;
+                count <= 1'b1;
+            end
+
+            1'b1: begin
+                EN1   <= 1'b0;
+                EN2   <= 1'b1;
+                HEX   <= hex1;
+                count <= 1'b0;
+            end
+
+            default: count <= 1'b0;
+        endcase
+    end
+
+endmodule
+
+module counter_div (c_clr, c_clk, clk_d);
+
+    parameter N = 6;
+
+    input  c_clr;
+    input  c_clk;
+    output reg clk_d;
+
+    reg [N-1:0] q;
+
+    always @(posedge c_clk or negedge c_clr) begin
+        if (c_clr == 0)
+            q <= 0;
+        else
+            q <= q + 1'b1;
+
+        clk_d <= q[N-1];
+    end
+
+endmodule
+
+module comparator (cmp_in, cmp_out);
+
+    input  [3:0] cmp_in;
+    output       cmp_out;
+
+    assign cmp_out = (cmp_in > 4'b1001) ? 1'b1 : 1'b0;
+
+endmodule
+module crkt_A (crkt_in, crkt_out);
+
+    input  [3:0] crkt_in;
+    output [3:0] crkt_out;
+
+    assign crkt_out[3] = ~crkt_in[3];
+    assign crkt_out[2] =  crkt_in[2] & crkt_in[1];
+    assign crkt_out[1] = ~crkt_in[1];
+    assign crkt_out[0] =  crkt_in[0];
+
+endmodule
+
+module mux_4bit_2_to_1 (m0, m1, sel, m_out);
+
+    input  [3:0] m0, m1;
+    input        sel;
+    output [3:0] m_out;
+
+    assign m_out = (sel == 1'b1) ? m1 : m0;
+
+endmodule
+
+module seven_segment (c, segment);
+
+    input  [3:0] c;
+    output [6:0] segment;
+
+    assign segment[0] = (~c[3]&~c[2]&~c[1]& c[0]) |
+                        (~c[3]& c[2]&~c[1]&~c[0]);
+
+    assign segment[1] = (~c[3]& c[2]&~c[1]& c[0]) |
+                        (~c[3]& c[2]& c[1]&~c[0]);
+
+    assign segment[2] = (~c[3]&~c[2]& c[1]&~c[0]);
+
+    assign segment[3] = (~c[3]&~c[2]&~c[1]& c[0]) |
+                        (~c[3]& c[2]&~c[1]&~c[0]) |
+                        ( c[3]&~c[2]& c[1]& c[0]);
+
+    assign segment[4] = (~c[3]& c[0]) |
+                        (~c[3]& c[2]&~c[1]) |
+                        (~c[2]&~c[1]& c[0]);
+
+    assign segment[5] = (~c[3]&~c[2]& c[0]) |
+                        (~c[3]&~c[2]& c[1]) |
+                        (~c[3]& c[1]& c[0]);
+
+    assign segment[6] = (~c[3]&~c[2]&~c[1]) |
+                        (~c[3]& c[2]& c[1]& c[0]);
+
+endmodule

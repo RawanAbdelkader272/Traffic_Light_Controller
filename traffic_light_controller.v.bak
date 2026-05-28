@@ -1,0 +1,187 @@
+module traffic_light_controller 
+  // Parameters for timing (in seconds)
+  // GREEN_TIME = 30 seconds, YELLOW_TIME = 5 seconds
+#(parameter GREEN_TIME = 30, YELLOW_TIME = 5, CLK_DIV = 50000000, MUX_CLK_DIV = 50000)
+(
+  input clk,           // 50MHz clock from Cyclone III EP3C120F780C7
+  input reset_n,       // Active low reset
+  input sensor_N,      // North road car sensor (switch input)
+  input sensor_E,      // East road car sensor (switch input)
+  output G_N,          // North Green LED
+  output Y_N,          // North Yellow LED
+  output R_N,          // North Red LED
+  output G_E,          // East Green LED
+  output Y_E,          // East Yellow LED
+  output R_E,          // East Red LED
+  output [6:0] seg,    // Single seven segment display (active low)
+  output [1:0] digit_sel  // Digit select: 2'b10 = tens, 2'b01 = ones (active low)
+);
+  
+  // States encoding - 4 main cycling states
+  localparam STATE_N_GREEN   = 2'b00,  // North Green, East Red
+             STATE_N_YELLOW  = 2'b01,  // North Yellow, East Yellow (transition N->E)
+             STATE_E_GREEN   = 2'b10,  // North Red, East Green
+             STATE_E_YELLOW  = 2'b11;  // North Yellow, East Yellow (transition E->N)
+ 
+  reg [1:0] state_reg, state_next;
+  reg [1:0] prev_state;  // To detect state changes
+  
+  // Clock divider for 1Hz
+  wire clk_1hz;
+  
+  // Multiplexing clock (~1kHz)
+  wire clk_mux;
+  reg digit_toggle;  // Toggles between ones (0) and tens (1)
+  
+  // Timer signals
+  wire timer_done;
+  reg timer_start;
+  wire [5:0] timer_count;
+  reg [5:0] timer_target;
+  
+  // Display value
+  wire [5:0] display_time;
+  wire [3:0] ones_digit, tens_digit;
+  wire [3:0] current_digit;  // Currently displayed digit
+  wire [6:0] seg_data;       // Seven segment data
+  
+  // Clock divider instantiation - 50MHz to 1Hz
+  clock_divider #(.DIV_VALUE(CLK_DIV)) clk_div(
+    .clk_in(clk),
+    .reset_n(reset_n),
+    .clk_out(clk_1hz)
+  );
+  
+  // Multiplexing clock divider - 50MHz to ~1kHz
+  mux_clock_divider #(.DIV_VALUE(MUX_CLK_DIV)) mux_clk_div(
+    .clk_in(clk),
+    .reset_n(reset_n),
+    .clk_out(clk_mux)
+  );
+  
+  // Single timer for all states
+  timer #(.FINAL_VALUE(GREEN_TIME)) main_timer(
+    .clk(clk_1hz),
+    .reset_n(reset_n),
+    .start(timer_start),
+    .done(timer_done),
+    .count(timer_count)
+  );
+
+  // State register and timer start logic
+  always @(posedge clk_1hz, negedge reset_n)
+  begin
+    if (~reset_n) begin
+      state_reg <= STATE_N_GREEN;
+      prev_state <= STATE_N_GREEN;
+      timer_start <= 1'b1;  // Start timer on reset
+    end
+    else begin
+      prev_state <= state_reg;
+      state_reg <= state_next;
+      // Generate start pulse when state changes
+      timer_start <= (state_next != state_reg);
+    end
+  end
+  
+  // Timer target based on current state
+  always @(*) begin
+    case(state_reg)
+      STATE_N_GREEN:  timer_target = GREEN_TIME;
+      STATE_N_YELLOW: timer_target = YELLOW_TIME;
+      STATE_E_GREEN:  timer_target = GREEN_TIME;
+      STATE_E_YELLOW: timer_target = YELLOW_TIME;
+      default:        timer_target = GREEN_TIME;
+    endcase
+  end
+  
+  // Next state logic
+  always @(*)
+  begin
+    state_next = state_reg;  // Default: stay in current state
+    
+    case(state_reg)
+      // North Green (30 seconds minimum)
+      STATE_N_GREEN: begin
+        // Check if green time is complete (count >= GREEN_TIME)
+        if (timer_count >= GREEN_TIME) begin
+          // Only transition if East car is waiting
+          if (sensor_E)
+            state_next = STATE_N_YELLOW;
+          // else stay green (no cars or only North car)
+        end
+      end
+      
+      // Yellow transition N->E (5 seconds)
+      STATE_N_YELLOW: begin
+        if (timer_count >= YELLOW_TIME)
+          state_next = STATE_E_GREEN;
+      end
+      
+      // East Green (30 seconds minimum)
+      STATE_E_GREEN: begin
+        if (timer_count >= GREEN_TIME) begin
+          // Only transition if North car is waiting
+          if (sensor_N)
+            state_next = STATE_E_YELLOW;
+          // If no North car but East car still present, stay green
+          // If no cars at all, go back to North green (default)
+          else if (~sensor_E)
+            state_next = STATE_E_YELLOW;  // Return to North green
+        end
+      end
+      
+      // Yellow transition E->N (5 seconds)
+      STATE_E_YELLOW: begin
+        if (timer_count >= YELLOW_TIME)
+          state_next = STATE_N_GREEN;
+      end
+      
+      default: state_next = STATE_N_GREEN;
+    endcase
+  end
+  
+  // Output logic - North lights
+  assign G_N = (state_reg == STATE_N_GREEN);
+  assign Y_N = (state_reg == STATE_N_YELLOW) || (state_reg == STATE_E_YELLOW);
+  assign R_N = (state_reg == STATE_E_GREEN);
+  
+  // Output logic - East lights
+  assign G_E = (state_reg == STATE_E_GREEN);
+  assign Y_E = (state_reg == STATE_N_YELLOW) || (state_reg == STATE_E_YELLOW);
+  assign R_E = (state_reg == STATE_N_GREEN);
+  
+  // Display time calculation (countdown style)
+  assign display_time = (state_reg == STATE_N_GREEN || state_reg == STATE_E_GREEN) ? 
+                        ((GREEN_TIME > timer_count) ? (GREEN_TIME - timer_count) : 6'd0) :
+                        ((YELLOW_TIME > timer_count) ? (YELLOW_TIME - timer_count) : 6'd0);
+  
+  // Split into digits for display
+  assign ones_digit = display_time % 10;
+  assign tens_digit = display_time / 10;
+  
+  // Digit multiplexing toggle
+  always @(posedge clk_mux, negedge reset_n)
+  begin
+    if (~reset_n)
+      digit_toggle <= 1'b0;
+    else
+      digit_toggle <= ~digit_toggle;
+  end
+  
+  // Select which digit to display based on toggle
+  assign current_digit = digit_toggle ? tens_digit : ones_digit;
+  
+  // Digit select output (active low for common anode displays)
+  // digit_sel[1] = tens digit enable, digit_sel[0] = ones digit enable
+  assign digit_sel = digit_toggle ? 2'b01 : 2'b10;  // Active low: enable one at a time
+  
+  // Single seven segment decoder instance
+  seven_seg_decoder seg_decoder(
+    .digit(current_digit),
+    .seg(seg)
+  );
+
+endmodule
+
+
