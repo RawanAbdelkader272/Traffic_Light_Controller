@@ -1,4 +1,4 @@
-# 🚦 Traffic Light Controller — ECE 432 Digital VLSI
+# 🚦 Traffic Light Controller 
 
 A hardware traffic light controller for a two-street intersection, implemented on an **Intel Cyclone III EP3C120F780C7 FPGA** using Verilog HDL.
 
